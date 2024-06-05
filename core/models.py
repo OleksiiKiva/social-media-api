@@ -1,17 +1,7 @@
-import pathlib
-import uuid
-
 from django.conf import settings
 from django.db import models
-from django.utils.text import slugify
 
-
-def profile_image_path(instance: "Profile", filename: str) -> pathlib.Path:
-    filename = (
-        f"{slugify(instance.username)}-{uuid.uuid4()}"
-        + pathlib.Path(filename).suffix
-    )
-    return pathlib.Path("upload/profiles/") / pathlib.Path(filename)
+from core.upload_image_to import UploadImageTo
 
 
 class Profile(models.Model):
@@ -25,7 +15,9 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=20)
     bio = models.TextField(max_length=500, blank=True, null=True)
     profile_image = models.ImageField(
-        blank=True, null=True, upload_to=profile_image_path
+        blank=True,
+        null=True,
+        upload_to=UploadImageTo("profiles/"),
     )
 
     @property
