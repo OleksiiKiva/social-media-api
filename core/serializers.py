@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Profile
+from core.models import Profile, Post
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -29,3 +29,34 @@ class ProfileSerializer(serializers.ModelSerializer):
         ):
             validated_data["profile_image"] = instance.profile_image
         return super().update(instance, validated_data)
+
+
+class PostSerializer(serializers.ModelSerializer):
+    author_username = serializers.CharField(
+        source="author.username", read_only=True
+    )
+    author_full_name = serializers.CharField(
+        source="author.full_name", read_only=True
+    )
+    author_image = serializers.ImageField(
+        source="author.profile_image", read_only=True
+    )
+    post_image = serializers.ImageField(required=False, read_only=True)
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "author_username",
+            "author_full_name",
+            "author_image",
+            "content",
+            "post_image",
+            "created_at",
+        )
+
+
+class PostImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ("id", "post_image")
